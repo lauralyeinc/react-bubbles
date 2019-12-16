@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { axiosWithAuth } from "../axiosWithAuth";
 
+import { SyncLoader } from "react-spinners"; 
+
 const Login = props => {
   // make a post request to retrieve a token from the api
   // when you have handled the token, navigate to the BubblePage route
   const [creds, setCreds] = useState({ username:'', password: ''});
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = event => {
     event.preventDefault();
+    setLoading(true); 
     axiosWithAuth()
       .post("http://localhost:5000/api/login", creds)
       .then (res => {
@@ -21,7 +25,7 @@ const Login = props => {
   }
 
   const handleChange = event => {
-    event.preventDefault();
+    // event.preventDefault();
     setCreds({...creds, [event.target.name]: event.target.value})
   }
 
@@ -48,6 +52,7 @@ const Login = props => {
           onChange={handleChange}
           />
           <button type='submit'> Submit </button>
+          { loading ? <SyncLoader color={'BD10E0'} size={25} /> : null}
         </form>
 
       </div>
