@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { axiosWithAuth} from "../axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -16,16 +17,40 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
+  const deleteColor = color => {
+    axiosWithAuth()
+    .delete(`http://localhost:5000/api/colors/${color.id}`)
+    .then(res => {
+      console.log("deleteColor in ColorList res", res)
+      updateColors(colors => colors.filter(color =>{
+        return color.id !== res.data; 
+      }));
+    })
+    .catch (error =>{
+      console.log("deleteColor in ColorList error", error);
+    });
+  };
+
   const saveEdit = e => {
     e.preventDefault();
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+    axiosWithAuth()
+    .put('http://localhost:5000/api/colors')
+    .then (res => {
+      console.log("saveEdit in ColorList.js res", res)
+    })
+    .catch(error => {
+      console.log("saveEdit in ColorList.js error", error)
+    })
+    .catch( error => {
+      console.log('saveEdit in ColorList.js .put error', error) 
+    })
+
+    setEditing(false);
   };
 
-  const deleteColor = color => {
-    // make a delete request to delete this color
-  };
 
   return (
     <div className="colors-wrap">
@@ -36,7 +61,7 @@ const ColorList = ({ colors, updateColors }) => {
             <span>
               <span className="delete" onClick={e => {
                     e.stopPropagation();
-                    deleteColor(color)
+                    deleteColor(color);
                   }
                 }>
                   x
